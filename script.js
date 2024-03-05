@@ -1,0 +1,82 @@
+document.addEventListener("DOMContentLoaded", function () {
+  const workItems = document.querySelectorAll(".work-item");
+  const work = document.querySelector(".work");
+  const overlay = document.querySelector(".overlay");
+  const prevElements = document.querySelectorAll(".prev");
+  const h1Elements = document.querySelectorAll(".container h1");
+
+  function handleHover(index) {
+    const positions = [
+      { top: "50%", left: "50%" },
+      { top: "0%", left: "13.25%" },
+      { top: "-50%", left: "-23.5%" },
+    ];
+
+    const position = positions[index];
+
+    overlay.style.transition = "top 1s, left 1s";
+    overlay.style.top = position.top;
+    overlay.style.left = position.left;
+
+    work.style.transition = "background-color 0.5s";
+    work.style.backgroundColor = ["#f4D160", "#58A3BC", "#28527A"][index];
+
+    prevElements.forEach((prev, i) => {
+      const rotation = i === index + 1 ? "rotate(22.5deg)" : "rotate(9deg)";
+      prev.style.transition = "transform 0.5s";
+      prev.style.transform = rotation + "scale(1)";
+    });
+
+    h1Elements.forEach((h1) => {
+      h1.style.transition = "color 0.5s"; // Add transition for smooth change
+      h1.style.color = "black";
+    });
+
+    // Change font family of work item titles to Helvetica
+    workItems.forEach((item, i) => {
+      item.style.transition = "font-family 1s ease";
+      if (i === index) {
+        item.style.fontFamily = "Lucida";
+      } else {
+        item.style.fontFamily = ""; // Reset font family for other items
+      }
+    });
+  }
+
+  function handleHoverOut() {
+    overlay.style.transition = "top 1s, left 1s";
+    overlay.style.top = "0%";
+    overlay.style.left = "13.25%";
+    overlay.style.zIndex = "1"; // Ensure the overlay is on top of other elements
+
+    work.style.transition = "background-color 0.5s";
+    work.style.backgroundColor = "#141414";
+    work.style.zIndex = "2";
+
+    workItems.forEach((item, i) => {
+      item.style.fontFamily = "";
+    });
+
+    prevElements.forEach((prev) => {
+      prev.style.transition = "transform 0.5s";
+      prev.style.transform = "rotate(10deg) scale(1)";
+    });
+    // Change text color of h1 elements of the previous cards back to white
+    h1Elements.forEach((h1) => {
+      h1.style.color = "#fff"; // Set text color back to white
+      h1.style.zIndex = "3";
+    });
+  }
+
+  workItems.forEach((item, index) => {
+    item.addEventListener("mouseenter", () => {
+      handleHover(index);
+    });
+
+    item.addEventListener("mouseleave", () => {
+      handleHoverOut();
+    });
+  });
+
+  handleHoverOut(); // Initialize with the hover out styling
+});
