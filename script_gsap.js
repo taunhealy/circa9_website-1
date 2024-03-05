@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const work = document.querySelector(".work");
   const overlay = document.querySelector(".overlay");
   const prevElements = document.querySelectorAll(".prev");
-  const h1Elements = document.querySelectorAll(".work-item h1");
 
   function handleHover(index) {
     const positions = [
@@ -16,22 +15,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     gsap.to(overlay, { top: position.top, left: position.left, duration: 1 });
 
-    h1Elements.forEach((h1, i) => {
-      gsap.to(h1Elements, { color: "blue", opacity: "50%" });
-    });
-
     work.style.transition = "background-color 0.5s";
     work.style.backgroundColor = ["#f4D160", "#58A3BC", "#28527A"][index];
 
     prevElements.forEach((prev, i) => {
-      const rotation = i === index + 1 ? "rotate(22.5deg)" : "rotate(9deg)";
-      gsap.to(prev, { transform: rotation + " scale(1)", duration: 0.5 });
+      const scale = i === index ? 1.2 : 0.9; // Scale down the non-hovered elements
+      gsap.to(prev, { scale: scale, duration: 0.5 });
+
+      const rotation = i === index ? 9 : -7; // Slight rotation for the hovered element, different rotation for non-hovered
+      gsap.to(prev, { rotation: rotation, duration: 1.2, ease: "power3.out" });
     });
 
-    gsap.to(workItems[index], {
-      color: "red",
-      duration: 1,
-      ease: "linear",
+    workItems.forEach((item, i) => {
+      const scale = i === index ? 1 : 0.95; // Scale down the non-hovered elements
+      gsap.to(item, { scale: scale, duration: 0.5 });
     });
   }
 
@@ -41,13 +38,8 @@ document.addEventListener("DOMContentLoaded", function () {
     work.style.transition = "background-color 0.5s";
     work.style.backgroundColor = "#141414";
 
-    workItems.forEach((item) => {
-      gsap.to(item, { color: "#fff", duration: 0.5 }); // Reset text color
-    });
-
-    prevElements.forEach((prev) => {
-      gsap.to(prev, { transform: "rotate(10deg) scale(1)", duration: 0.5 });
-    });
+    gsap.to(workItems, { scale: 1, duration: 0.5 }); // Reset scale for all work items
+    gsap.to(prevElements, { scale: 1, rotation: 0, duration: 0.5 }); // Reset scale and rotation for all prev elements
   }
 
   workItems.forEach((item, index) => {
