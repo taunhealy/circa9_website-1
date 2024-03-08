@@ -4,6 +4,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const overlay = document.querySelector(".overlay");
   const prevElements = document.querySelectorAll(".prev");
 
+  // Set initial background to gradient-1
+  work.style.backgroundImage = `url('${
+    document.querySelector("#gradient-1 img").src
+  }')`;
+
   function handleHover(index) {
     const positions = [
       { top: "50%", left: "50%" },
@@ -15,31 +20,44 @@ document.addEventListener("DOMContentLoaded", function () {
 
     gsap.to(overlay, { top: position.top, left: position.left, duration: 1 });
 
-    work.style.transition = "background-color 0.5s";
-    work.style.backgroundColor = ["#f4D160", "#58A3BC", "#28527A"][index];
+    const gradient = document.querySelector(`#gradient-${index + 1}`);
+    gsap.to(gradient, { opacity: 1, duration: 0.5 }); // Fade in the gradient image on hover
+
+    work.style.transition = "background-image 0.5s";
+
+    // Update background image
+    work.style.backgroundImage = `url('${gradient.querySelector("img").src}')`;
 
     prevElements.forEach((prev, i) => {
-      const scale = i === index ? 1.2 : 0.9; // Scale down the non-hovered elements
+      const scale = i === index ? 1.2 : 1.1;
       gsap.to(prev, { scale: scale, duration: 0.5 });
 
-      const rotation = i === index ? 9 : -7; // Slight rotation for the hovered element, different rotation for non-hovered
-      gsap.to(prev, { rotation: rotation, duration: 1.2, ease: "power3.out" });
+      const rotation = i === index ? 9 : -7;
+      gsap.to(prev, { rotation: rotation, duration: 1, ease: "power.out4" });
     });
 
     workItems.forEach((item, i) => {
-      const scale = i === index ? 1 : 0.95; // Scale down the non-hovered elements
+      const scale = i === index ? 1 : 0.95;
       gsap.to(item, { scale: scale, duration: 0.5 });
     });
   }
 
   function handleHoverOut() {
     gsap.to(overlay, { top: "0%", left: "13.25%", duration: 1 });
+    gsap.to(".gradient", { opacity: 0, duration: 0.5 }); // Fade out all gradient images
 
-    work.style.transition = "background-color 0.5s";
-    work.style.backgroundColor = "#141414";
+    // Set background to gradient-1
+    work.style.transition = "background-image 0.5s";
+    work.style.backgroundImage = `url('${
+      document.querySelector("#gradient-1 img").src
+    }')`;
 
-    gsap.to(workItems, { scale: 1, duration: 0.5 }); // Reset scale for all work items
-    gsap.to(prevElements, { scale: 1, rotation: 0, duration: 0.5 }); // Reset scale and rotation for all prev elements
+    gsap.to(workItems, { scale: 1, duration: 0.5 });
+    gsap.to(prevElements, {
+      scale: 1,
+      duration: 0.3,
+      ease: "power.out",
+    });
   }
 
   workItems.forEach((item, index) => {
@@ -52,5 +70,5 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  handleHoverOut(); // Initialize with the hover out styling
+  handleHoverOut(); // Set initial background to gradient-1
 });
