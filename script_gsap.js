@@ -1,15 +1,20 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Wait for the DOM content to be fully loaded
-
   const workItems = document.querySelectorAll(".work-item");
   const overlay = document.querySelector(".overlay");
   const prevElements = document.querySelectorAll(".prev");
   const underlay = document.querySelector(".underlay"); // Select the underlay element
+  const gradientImages = document.querySelectorAll(".gradient img");
 
-  // Set initial background to gradient-1
-  underlay.style.backgroundImage = `url('${
-    document.querySelector("#gradient-1 img").src
-  }')`;
+  // Function to preload all gradient images
+  function preloadImages(images) {
+    images.forEach((img) => {
+      const src = img.getAttribute("src");
+      new Image().src = src;
+    });
+  }
+
+  // Preload gradient images
+  preloadImages(gradientImages);
 
   function handleHover(index) {
     const positions = [
@@ -22,19 +27,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
     gsap.to(overlay, { top: position.top, left: position.left, duration: 1 });
 
-    const gradient = document.querySelector(`#gradient-${index + 1}`);
-    gsap.to(gradient, { opacity: 1, duration: 1.8, scale: 1.5 });
+    const randomGradientIndex = Math.floor(
+      Math.random() * gradientImages.length
+    );
+    const randomGradient = gradientImages[randomGradientIndex].src;
 
-    underlay.style.backgroundImage = `url('${
-      gradient.querySelector("img").src
-    }')`;
+    underlay.style.backgroundImage = `url('${randomGradient}')`;
+    gsap.set(".gradient", { opacity: 0 });
+    gsap.to(".gradient", { opacity: 1, duration: 1, scale: 1.5 });
 
     prevElements.forEach((prev, i) => {
       const scale = i === index ? 1.3 : 1.1;
-      gsap.to(prev, { scale: scale, duration: 0.9 });
-
       const rotation = i === index ? 9 : -7;
-      gsap.to(prev, { rotation: rotation, duration: 1, ease: "power.out4" });
+      gsap.to(prev, {
+        scale: scale,
+        rotation: rotation,
+        duration: 1,
+        ease: "power.out4",
+      });
     });
 
     workItems.forEach((item, i) => {
@@ -45,11 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function handleHoverOut() {
     gsap.to(overlay, { top: "0%", left: "13.25%", duration: 1 });
-    gsap.to(".gradient", { opacity: 0, duration: 1.8 });
-
-    underlay.style.backgroundImage = `url('${
-      document.querySelector("#gradient-1 img").src
-    }')`;
+    gsap.to(".gradient", { opacity: 0, duration: 1 });
 
     gsap.to(workItems, { scale: 1, duration: 0.5 });
     gsap.to(prevElements, { scale: 1, duration: 0.3, ease: "power.out" });
@@ -65,5 +71,5 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  handleHoverOut(); // Set initial background to gradient-1
+  handleHover(0); // Set initial background to a random gradient
 });
