@@ -16,6 +16,11 @@ document.addEventListener("DOMContentLoaded", function () {
   // Preload gradient images
   preloadImages(gradientImages);
 
+  // Function to get a random integer between min and max (inclusive)
+  function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
   function handleHover(index) {
     const positions = [
       { top: "50%", left: "50%" },
@@ -27,9 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     gsap.to(overlay, { top: position.top, left: position.left, duration: 1 });
 
-    const randomGradientIndex = Math.floor(
-      Math.random() * gradientImages.length
-    );
+    const randomGradientIndex = getRandomInt(0, gradientImages.length - 1);
     const randomGradient = gradientImages[randomGradientIndex].src;
 
     underlay.style.backgroundImage = `url('${randomGradient}')`;
@@ -71,5 +74,5 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  handleHover(0); // Set initial background to a random gradient
+  handleHover(getRandomInt(0, workItems.length - 1)); // Set initial background to a random gradient
 });
